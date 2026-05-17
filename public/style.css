@@ -1,0 +1,568 @@
+:root {
+  --bg:              #0d1117;
+  --bg-grid:         rgba(255, 255, 255, 0.035);
+  --surface:         rgba(255, 255, 255, 0.055);
+  --surface-hover:   rgba(255, 255, 255, 0.085);
+  --surface-input:   rgba(255, 255, 255, 0.04);
+
+  --accent:          #22d3ee;
+  --accent-glow:     rgba(34, 211, 238, 0.35);
+  --accent-dim:      rgba(34, 211, 238, 0.12);
+
+  --violet:          #818cf8;
+  --violet-dim:      rgba(129, 140, 248, 0.15);
+  --border-violet:   rgba(129, 140, 248, 0.35);
+
+  --text-primary:    #e2e8f0;
+  --text-secondary:  #94a3b8;
+  --text-muted:      #475569;
+
+  --border:          rgba(255, 255, 255, 0.08);
+  --border-accent:   rgba(34, 211, 238, 0.4);
+
+  --danger:          rgba(248, 113, 113, 0.85);
+  --danger-dim:      rgba(248, 113, 113, 0.12);
+  --danger-border:   rgba(248, 113, 113, 0.3);
+
+  --radius-sm:       6px;
+  --radius-md:       12px;
+  --radius-lg:       18px;
+
+  --blur:            blur(16px);
+  --blur-modal:      blur(24px);
+
+  --shadow-card:     0 4px 24px rgba(0, 0, 0, 0.4), 0 1px 0 rgba(255, 255, 255, 0.05) inset;
+  --shadow-glow:     0 0 20px var(--accent-glow);
+  --shadow-modal:    0 8px 48px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.06);
+
+  --font-ui:         'Inter', system-ui, sans-serif;
+  --font-note:       'Caveat', cursive;
+
+  --ease:            cubic-bezier(0.4, 0, 0.2, 1);
+  --duration:        0.22s;
+}
+
+/* ── Reset ─────────────────────────────────────────── */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-ui);
+  font-weight: 400;
+  background-color: var(--bg);
+  background-image: radial-gradient(circle, var(--bg-grid) 1px, transparent 1px);
+  background-size: 28px 28px;
+  color: var(--text-primary);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Keyframes ──────────────────────────────────────── */
+
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes fadeSlideOut {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    max-height: 300px;
+    margin-bottom: 0.875rem;
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.96);
+    max-height: 0;
+    margin-bottom: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+}
+
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 8px var(--accent-glow); }
+  50%       { box-shadow: 0 0 22px var(--accent-glow), 0 0 44px var(--accent-glow); }
+}
+
+@keyframes modalIn {
+  from {
+    opacity: 0;
+    transform: scale(0.92) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position:  200% center; }
+}
+
+/* ── Modal ──────────────────────────────────────────── */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.72);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.modal-overlay.hidden {
+  display: none;
+}
+
+.modal {
+  background: rgba(15, 23, 42, 0.92);
+  backdrop-filter: var(--blur-modal);
+  -webkit-backdrop-filter: var(--blur-modal);
+  border: 1px solid var(--border-accent);
+  border-radius: var(--radius-lg);
+  padding: 2.25rem 2rem;
+  width: 300px;
+  text-align: center;
+  box-shadow: var(--shadow-modal);
+  animation: modalIn 0.28s var(--ease) both;
+}
+
+.modal h2 {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 1.5rem;
+  letter-spacing: 0.02em;
+}
+
+#name-options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.name-btn {
+  padding: 0.7rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text-primary);
+  font-family: var(--font-ui);
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    background var(--duration) var(--ease),
+    border-color var(--duration) var(--ease),
+    box-shadow var(--duration) var(--ease),
+    transform var(--duration) var(--ease);
+}
+
+.name-btn:hover {
+  background: var(--accent-dim);
+  border-color: var(--border-accent);
+  box-shadow: 0 0 12px var(--accent-glow);
+  transform: translateX(3px);
+}
+
+/* ── Header ─────────────────────────────────────────── */
+
+header {
+  background: rgba(13, 17, 23, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: 0.9rem 1.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+header h1 {
+  font-size: 1.35rem;
+  font-weight: 600;
+  display: flex;
+  flex-direction: column;
+  line-height: 1.15;
+  background: linear-gradient(90deg, var(--text-primary) 20%, var(--accent) 50%, var(--text-primary) 80%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer 6s linear infinite;
+}
+
+.header-tagline {
+  font-size: 0.62rem;
+  font-weight: 300;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  -webkit-text-fill-color: var(--text-muted);
+  color: var(--text-muted);
+  background: none;
+  -webkit-background-clip: unset;
+  background-clip: unset;
+  animation: none;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  font-weight: 400;
+}
+
+#switch-btn {
+  padding: 0.3rem 0.75rem;
+  border: 1px solid var(--border-violet);
+  border-radius: var(--radius-sm);
+  background: var(--violet-dim);
+  color: var(--violet);
+  font-family: var(--font-ui);
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  letter-spacing: 0.04em;
+  transition:
+    background var(--duration) var(--ease),
+    box-shadow var(--duration) var(--ease);
+}
+
+#switch-btn:hover {
+  background: rgba(129, 140, 248, 0.25);
+  box-shadow: 0 0 10px rgba(129, 140, 248, 0.3);
+}
+
+/* ── Layout ─────────────────────────────────────────── */
+
+main {
+  max-width: 740px;
+  margin: 2.5rem auto;
+  padding: 0 1.25rem;
+}
+
+/* ── Add Note Panel ─────────────────────────────────── */
+
+.add-note {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  margin-bottom: 2.5rem;
+  background: var(--surface);
+  backdrop-filter: var(--blur);
+  -webkit-backdrop-filter: var(--blur);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 1.1rem 1.25rem 1rem;
+  transition:
+    border-color var(--duration) var(--ease),
+    box-shadow var(--duration) var(--ease);
+}
+
+.add-note:focus-within {
+  border-color: var(--border-accent);
+  box-shadow: 0 0 0 1px var(--accent-dim), 0 0 28px var(--accent-glow);
+}
+
+#new-note-input {
+  width: 100%;
+  padding: 0.75rem 0.85rem;
+  background: var(--surface-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-family: var(--font-note);
+  font-size: 1.25rem;
+  font-weight: 400;
+  line-height: 1.5;
+  resize: vertical;
+  caret-color: var(--accent);
+  transition: border-color var(--duration) var(--ease);
+}
+
+#new-note-input::placeholder {
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+#new-note-input:focus {
+  outline: none;
+  border-color: rgba(34, 211, 238, 0.5);
+}
+
+#add-btn {
+  align-self: flex-end;
+  padding: 0.5rem 1.35rem;
+  background: var(--accent);
+  color: #0d1117;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-ui);
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  box-shadow: 0 0 12px var(--accent-glow);
+  animation: pulseGlow 3s ease-in-out infinite;
+  transition:
+    background var(--duration) var(--ease),
+    box-shadow var(--duration) var(--ease),
+    transform var(--duration) var(--ease);
+}
+
+#add-btn:hover {
+  background: #67e8f9;
+  box-shadow: 0 0 24px var(--accent-glow), 0 0 48px var(--accent-glow);
+  transform: translateY(-1px);
+  animation: none;
+}
+
+#add-btn:active {
+  transform: translateY(0) scale(0.97);
+}
+
+/* ── Notes List ─────────────────────────────────────── */
+
+#notes-list {
+  position: relative;
+  width: 100%;
+  min-height: 600px;
+}
+
+.empty-state {
+  color: var(--text-muted);
+  text-align: center;
+  padding: 3rem 0;
+  font-family: var(--font-note);
+  font-size: 1.3rem;
+  opacity: 0.7;
+}
+
+/* ── Note Cards ─────────────────────────────────────── */
+
+.note-card {
+  background: var(--surface);
+  backdrop-filter: var(--blur);
+  -webkit-backdrop-filter: var(--blur);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 1rem 1.15rem 0.875rem;
+  box-shadow: var(--shadow-card);
+  position: absolute;
+  width: 260px;
+  overflow: hidden;
+  animation: fadeSlideIn 0.32s var(--ease) both;
+  transition:
+    border-color var(--duration) var(--ease),
+    box-shadow var(--duration) var(--ease),
+    transform var(--duration) var(--ease);
+}
+
+.note-card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 12px;
+  bottom: 12px;
+  width: 3px;
+  background: linear-gradient(to bottom, var(--accent), var(--violet));
+  border-radius: 0 2px 2px 0;
+  opacity: 0.7;
+}
+
+.note-card:hover {
+  border-color: rgba(34, 211, 238, 0.22);
+  box-shadow: var(--shadow-card), 0 0 20px rgba(34, 211, 238, 0.07);
+  transform: translateY(-2px);
+}
+
+.note-card.is-deleting {
+  animation: fadeSlideOut 0.28s var(--ease) forwards;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.note-card:not(.is-dragging) {
+  cursor: grab;
+}
+
+.note-card.is-dragging {
+  cursor: grabbing;
+  border-color: var(--border-accent);
+  box-shadow: var(--shadow-card), 0 0 28px var(--accent-glow), 0 12px 40px rgba(0,0,0,0.6);
+  transform: scale(1.03) rotate(1deg);
+  transition: none;
+  z-index: 10;
+  opacity: 0.92;
+}
+
+.note-author {
+  font-family: var(--font-ui);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--violet);
+  margin-bottom: 0.45rem;
+  padding-left: 0.75rem;
+}
+
+.note-body {
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-family: var(--font-note);
+  font-size: 1.3rem;
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--text-primary);
+  margin-bottom: 0.55rem;
+  padding-left: 0.75rem;
+}
+
+.note-meta {
+  font-family: var(--font-ui);
+  font-size: 0.7rem;
+  font-weight: 300;
+  color: var(--text-muted);
+  letter-spacing: 0.03em;
+  margin-top: 0.5rem;
+  padding-left: 0.75rem;
+}
+
+/* ── Note Actions ───────────────────────────────────── */
+
+.note-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.6rem;
+  padding-left: 0.75rem;
+}
+
+.note-actions button {
+  padding: 0.32rem 0.8rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--surface-hover);
+  color: var(--text-secondary);
+  font-family: var(--font-ui);
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  letter-spacing: 0.02em;
+  transition:
+    background var(--duration) var(--ease),
+    border-color var(--duration) var(--ease),
+    color var(--duration) var(--ease),
+    box-shadow var(--duration) var(--ease);
+}
+
+.btn-edit:hover {
+  background: var(--accent-dim);
+  border-color: var(--border-accent);
+  color: var(--accent);
+  box-shadow: 0 0 8px var(--accent-glow);
+}
+
+.btn-delete {
+  color: var(--danger);
+  border-color: var(--danger-border);
+  background: var(--danger-dim);
+}
+
+.btn-delete:hover {
+  background: rgba(248, 113, 113, 0.22);
+  border-color: rgba(248, 113, 113, 0.55);
+  box-shadow: 0 0 10px rgba(248, 113, 113, 0.3);
+}
+
+/* Save / Cancel buttons (no class — created dynamically in startEdit) */
+.note-actions button:not(.btn-edit):not(.btn-delete) {
+  padding: 0.32rem 0.8rem;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-ui);
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    background var(--duration) var(--ease),
+    box-shadow var(--duration) var(--ease);
+}
+
+.note-actions button:not(.btn-edit):not(.btn-delete):first-child {
+  background: var(--accent);
+  color: #0d1117;
+  border: none;
+  box-shadow: 0 0 10px var(--accent-glow);
+}
+
+.note-actions button:not(.btn-edit):not(.btn-delete):first-child:hover {
+  background: #67e8f9;
+  box-shadow: 0 0 18px var(--accent-glow);
+}
+
+.note-actions button:not(.btn-edit):not(.btn-delete):last-child {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+}
+
+.note-actions button:not(.btn-edit):not(.btn-delete):last-child:hover {
+  background: var(--surface-hover);
+}
+
+/* ── Edit-in-place Textarea ─────────────────────────── */
+
+.note-edit-area {
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--border-accent);
+  border-radius: var(--radius-sm);
+  background: rgba(34, 211, 238, 0.05);
+  color: var(--text-primary);
+  font-family: var(--font-note);
+  font-size: 1.3rem;
+  font-weight: 400;
+  line-height: 1.55;
+  resize: vertical;
+  margin-bottom: 0.65rem;
+  caret-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent-dim) inset;
+  transition: box-shadow var(--duration) var(--ease);
+}
+
+.note-edit-area:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--accent-dim) inset, 0 0 16px var(--accent-glow);
+}
+
+/* ── Responsive ─────────────────────────────────────── */
+
+@media (max-width: 540px) {
+  header { padding: 0.75rem 1rem; }
+  header h1 { font-size: 1.1rem; }
+  main { margin: 1.5rem auto; padding: 0 0.875rem; }
+  .note-body { font-size: 1.15rem; }
+  #add-btn { align-self: stretch; }
+}

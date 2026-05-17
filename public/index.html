@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Family Whiteboard</title>
+  <meta name="theme-color" content="#0d1117">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="name-modal" class="modal-overlay hidden">
+    <div class="modal">
+      <h2>Who are you?</h2>
+      <div id="name-options"></div>
+    </div>
+  </div>
+
+  <header>
+    <h1>Family Whiteboard<span class="header-tagline">shared space</span></h1>
+    <div class="user-info">
+      <span id="user-greeting"></span>
+      <button id="switch-btn">Switch</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="add-note">
+      <textarea id="new-note-input" placeholder="Write a note..." rows="3"></textarea>
+      <button id="add-btn">Add Note</button>
+    </section>
+
+    <section id="notes-list"></section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
