@@ -20,6 +20,22 @@ Use two separate tool calls:
 1. Start with `run_in_background: true`
 2. Then `curl` or other checks in a separate call
 
+## Git Workflow
+
+For every new feature or bug fix, create a branch off `main`, work there, and merge back when satisfied.
+
+```bash
+git checkout -b feature/short-description   # or fix/short-description
+# ... make changes ...
+git add <files>
+git commit -m "description"
+git checkout main
+git merge feature/short-description
+git branch -d feature/short-description
+```
+
+Always confirm with the user before merging or deleting branches.
+
 ## Docs
 
 - [Architecture](.claude/docs/architecture.md) — request flow, auth identity, database, admin panel
