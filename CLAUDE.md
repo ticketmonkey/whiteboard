@@ -22,7 +22,7 @@ Use two separate tool calls:
 
 ## Git Workflow
 
-For every new feature or bug fix, create a branch off `main`, work there, and merge back when satisfied.
+For every new feature or bug fix, create a branch off `main` **before making any code changes**, work there, and merge back when satisfied.
 
 ```bash
 git checkout -b feature/short-description   # or fix/short-description
