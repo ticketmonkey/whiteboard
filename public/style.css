@@ -456,28 +456,56 @@ main {
 /* ── Note Actions ───────────────────────────────────── */
 
 .note-actions {
+  position: absolute;
+  top: 8px;
+  right: 8px;
   display: flex;
+  flex-direction: column;
+  gap: 4px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.18s var(--ease);
+}
+
+.note-card:hover .note-actions {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.note-actions.is-editing {
+  position: static;
+  opacity: 1;
+  pointer-events: auto;
+  flex-direction: row;
   gap: 0.5rem;
   margin-top: 0.6rem;
   padding-left: 0.75rem;
 }
 
-.note-actions button {
-  padding: 0.32rem 0.8rem;
-  border-radius: var(--radius-sm);
+@media (hover: none) {
+  .note-actions {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+
+.btn-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border-radius: 6px;
   border: 1px solid var(--border);
-  background: var(--surface-hover);
+  background: var(--surface);
   color: var(--text-secondary);
-  font-family: var(--font-ui);
-  font-size: 0.8rem;
-  font-weight: 500;
   cursor: pointer;
-  letter-spacing: 0.02em;
   transition:
-    background var(--duration) var(--ease),
-    border-color var(--duration) var(--ease),
-    color var(--duration) var(--ease),
-    box-shadow var(--duration) var(--ease);
+    background 0.15s var(--ease),
+    border-color 0.15s var(--ease),
+    color 0.15s var(--ease),
+    box-shadow 0.15s var(--ease);
 }
 
 .btn-edit:hover {
@@ -500,7 +528,7 @@ main {
 }
 
 /* Save / Cancel buttons (no class — created dynamically in startEdit) */
-.note-actions button:not(.btn-edit):not(.btn-delete) {
+.note-actions button:not(.btn-icon) {
   padding: 0.32rem 0.8rem;
   border-radius: var(--radius-sm);
   font-family: var(--font-ui);
@@ -512,25 +540,25 @@ main {
     box-shadow var(--duration) var(--ease);
 }
 
-.note-actions button:not(.btn-edit):not(.btn-delete):first-child {
+.note-actions button:not(.btn-icon):first-child {
   background: var(--accent);
   color: #0d1117;
   border: none;
   box-shadow: 0 0 10px var(--accent-glow);
 }
 
-.note-actions button:not(.btn-edit):not(.btn-delete):first-child:hover {
+.note-actions button:not(.btn-icon):first-child:hover {
   background: #67e8f9;
   box-shadow: 0 0 18px var(--accent-glow);
 }
 
-.note-actions button:not(.btn-edit):not(.btn-delete):last-child {
+.note-actions button:not(.btn-icon):last-child {
   background: transparent;
   color: var(--text-secondary);
   border: 1px solid var(--border);
 }
 
-.note-actions button:not(.btn-edit):not(.btn-delete):last-child:hover {
+.note-actions button:not(.btn-icon):last-child:hover {
   background: var(--surface-hover);
 }
 
