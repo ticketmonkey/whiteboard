@@ -211,14 +211,15 @@
   }
 
   function attachDragHandlers(card, note) {
-    card.addEventListener('mousedown', (e) => {
+    card.addEventListener('pointerdown', (e) => {
       if (e.target.closest('button') || e.target.closest('textarea')) return;
       e.preventDefault();
+      card.setPointerCapture(e.pointerId);
       isDragging = true;
       card.classList.add('is-dragging');
 
-      const startX = e.clientX;
-      const startY = e.clientY;
+      const startX    = e.clientX;
+      const startY    = e.clientY;
       const startLeft = parseInt(card.style.left, 10) || 0;
       const startTop  = parseInt(card.style.top,  10) || 0;
 
@@ -227,8 +228,9 @@
         card.style.top  = (startTop  + e.clientY - startY) + 'px';
       }
       function onUp() {
-        document.removeEventListener('mousemove', onMove);
-        document.removeEventListener('mouseup',   onUp);
+        card.removeEventListener('pointermove',   onMove);
+        card.removeEventListener('pointerup',     onUp);
+        card.removeEventListener('pointercancel', onUp);
         card.classList.remove('is-dragging');
         isDragging = false;
 
@@ -244,8 +246,9 @@
 
         if (pendingRerender) loadAndRender();
       }
-      document.addEventListener('mousemove', onMove);
-      document.addEventListener('mouseup',   onUp);
+      card.addEventListener('pointermove',   onMove);
+      card.addEventListener('pointerup',     onUp);
+      card.addEventListener('pointercancel', onUp);
     });
   }
 

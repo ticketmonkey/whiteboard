@@ -406,6 +406,8 @@ main {
 
 .note-card:not(.is-dragging) {
   cursor: grab;
+  touch-action: none;
+  user-select: none;
 }
 
 .note-card.is-dragging {
