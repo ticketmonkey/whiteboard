@@ -11,11 +11,35 @@
   const adminCloseBtn = document.getElementById('admin-close-btn');
   const clearBoardBtn = document.getElementById('clear-board-btn');
   const fontOptionsEl = document.getElementById('font-options');
+  const styleOptionsEl = document.getElementById('style-options');
 
   let currentUser = null;
   let isDragging = false;
   let pendingRerender = false;
   let adminList = [];
+
+  const NOTE_STYLES = [
+    {
+      id: 'uniform',
+      label: 'Uniform',
+      previewSvg: `<svg viewBox="0 0 44 30" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="40" height="26" rx="4" stroke="currentColor" stroke-width="1.5"/></svg>`,
+    },
+    {
+      id: 'scattered',
+      label: 'Scattered',
+      previewSvg: `<svg viewBox="0 0 44 30" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="4" y="4" width="36" height="22" rx="3" stroke="currentColor" stroke-width="1.5" transform="rotate(-3 22 15)"/></svg>`,
+    },
+    {
+      id: 'crystalline',
+      label: 'Crystalline',
+      previewSvg: `<svg viewBox="0 0 44 30" fill="none" xmlns="http://www.w3.org/2000/svg"><polygon points="2,2 34,2 42,10 42,28 2,28" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>`,
+    },
+    {
+      id: 'warped',
+      label: 'Warped',
+      previewSvg: `<svg viewBox="0 0 44 30" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="3" width="40" height="24" rx="10" ry="4" stroke="currentColor" stroke-width="1.5" transform="rotate(1 22 15)"/></svg>`,
+    },
+  ];
 
   const FONT_GROUPS = [
     {
@@ -78,6 +102,27 @@
     });
   }
 
+  function applyNoteStyle(styleId) {
+    document.body.dataset.noteStyle = styleId;
+    localStorage.setItem('noteStyle', styleId);
+    renderStyleOptions();
+  }
+
+  function renderStyleOptions() {
+    const current = localStorage.getItem('noteStyle') || 'uniform';
+    styleOptionsEl.innerHTML = '';
+    const grid = document.createElement('div');
+    grid.className = 'style-grid';
+    NOTE_STYLES.forEach(({ id, label, previewSvg }) => {
+      const btn = document.createElement('button');
+      btn.className = 'style-card' + (id === current ? ' style-card--active' : '');
+      btn.innerHTML = previewSvg + `<span>${escapeHtml(label)}</span>`;
+      btn.addEventListener('click', () => applyNoteStyle(id));
+      grid.appendChild(btn);
+    });
+    styleOptionsEl.appendChild(grid);
+  }
+
   function escapeHtml(str) {
     return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
   }
@@ -133,7 +178,7 @@
            </div>`
         : '';
       return `
-        <div class="note-card" data-id="${n.id}">
+        <div class="note-card" data-id="${n.id}" data-note-variant="${n.id % 4}">
           <div class="note-author">${escapeHtml(n.author)}</div>
           <div class="note-body">${escapeHtml(n.content)}</div>
           ${actions}
@@ -276,6 +321,7 @@
 
   adminBtn.addEventListener('click', () => {
     renderFontOptions();
+    renderStyleOptions();
     adminModal.classList.remove('hidden');
   });
 
@@ -304,6 +350,7 @@
   // Init
   const savedFont = localStorage.getItem('noteFont');
   if (savedFont) document.documentElement.style.setProperty('--font-note', `'${savedFont}', cursive`);
+  document.body.dataset.noteStyle = localStorage.getItem('noteStyle') || 'uniform';
 
   const saved = localStorage.getItem('author');
   if (saved) {
