@@ -5,6 +5,7 @@ const db = require('./db');
 const config = require('./config.json');
 
 const family = new Set(config.family);
+const admins = new Set(config.admins || []);
 
 const app = express();
 const server = http.createServer(app);
@@ -21,7 +22,7 @@ function broadcast() {
 }
 
 app.get('/api/config', (req, res) => {
-  res.json({ family: config.family });
+  res.json({ family: config.family, admins: config.admins || [] });
 });
 
 app.get('/api/notes', (req, res) => {
@@ -58,6 +59,14 @@ app.patch('/api/notes/:id/position', (req, res) => {
   const note = db.updateNotePosition(Number(req.params.id), x, y);
   broadcast();
   res.json(note);
+});
+
+app.delete('/api/notes', (req, res) => {
+  const admin = req.query.admin;
+  if (!admin || !admins.has(admin)) return res.status(403).json({ error: 'Admin access required' });
+  db.clearAllNotes();
+  broadcast();
+  res.status(204).end();
 });
 
 app.delete('/api/notes/:id', (req, res) => {

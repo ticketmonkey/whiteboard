@@ -7,7 +7,7 @@
   <meta name="theme-color" content="#0d1117">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600&family=Inter:wght@300;400;500;600&family=Patrick+Hand&family=Indie+Flower&family=Kalam&family=Permanent+Marker&family=Dancing+Script&family=Gloria+Hallelujah&family=Orbitron&family=Exo+2&family=Rajdhani&family=Share+Tech&family=JetBrains+Mono&family=Space+Mono&family=Fira+Code&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -22,6 +22,7 @@
     <h1>Family Whiteboard<span class="header-tagline">shared space</span></h1>
     <div class="user-info">
       <span id="user-greeting"></span>
+      <button id="admin-btn" class="hidden">Admin</button>
       <button id="switch-btn">Switch</button>
     </div>
   </header>
@@ -34,6 +35,26 @@
 
     <section id="notes-list"></section>
   </main>
+
+  <div id="admin-modal" class="modal-overlay hidden">
+    <div class="modal modal--admin">
+      <div class="admin-modal-header">
+        <h2>Admin Panel</h2>
+        <button id="admin-close-btn" class="admin-close">&#x2715;</button>
+      </div>
+
+      <div class="admin-section">
+        <h3>Clear Whiteboard</h3>
+        <p>Permanently removes all notes for everyone. Cannot be undone.</p>
+        <button id="clear-board-btn">Clear All Notes</button>
+      </div>
+
+      <div class="admin-section">
+        <h3>Note Font</h3>
+        <div id="font-options"></div>
+      </div>
+    </div>
+  </div>
 
   <script src="app.js"></script>
 </body>

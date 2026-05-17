@@ -6,10 +6,77 @@
   const nameOptions = document.getElementById('name-options');
   const userGreeting = document.getElementById('user-greeting');
   const switchBtn = document.getElementById('switch-btn');
+  const adminBtn = document.getElementById('admin-btn');
+  const adminModal = document.getElementById('admin-modal');
+  const adminCloseBtn = document.getElementById('admin-close-btn');
+  const clearBoardBtn = document.getElementById('clear-board-btn');
+  const fontOptionsEl = document.getElementById('font-options');
 
   let currentUser = null;
   let isDragging = false;
   let pendingRerender = false;
+  let adminList = [];
+
+  const FONT_GROUPS = [
+    {
+      group: 'Handwriting',
+      fonts: [
+        { label: 'Caveat',            family: 'Caveat' },
+        { label: 'Patrick Hand',      family: 'Patrick Hand' },
+        { label: 'Indie Flower',      family: 'Indie Flower' },
+        { label: 'Kalam',             family: 'Kalam' },
+        { label: 'Permanent Marker',  family: 'Permanent Marker' },
+        { label: 'Dancing Script',    family: 'Dancing Script' },
+        { label: 'Gloria Hallelujah', family: 'Gloria Hallelujah' },
+      ],
+    },
+    {
+      group: 'Futuristic',
+      fonts: [
+        { label: 'Orbitron',   family: 'Orbitron' },
+        { label: 'Exo 2',      family: 'Exo 2' },
+        { label: 'Rajdhani',   family: 'Rajdhani' },
+        { label: 'Share Tech', family: 'Share Tech' },
+      ],
+    },
+    {
+      group: 'Monospace',
+      fonts: [
+        { label: 'JetBrains Mono', family: 'JetBrains Mono' },
+        { label: 'Space Mono',     family: 'Space Mono' },
+        { label: 'Fira Code',      family: 'Fira Code' },
+      ],
+    },
+  ];
+
+  function applyFont(family) {
+    document.documentElement.style.setProperty('--font-note', `'${family}', cursive`);
+    localStorage.setItem('noteFont', family);
+    renderFontOptions();
+  }
+
+  function renderFontOptions() {
+    const current = localStorage.getItem('noteFont') || 'Caveat';
+    fontOptionsEl.innerHTML = '';
+    FONT_GROUPS.forEach(({ group, fonts }) => {
+      const groupLabel = document.createElement('div');
+      groupLabel.className = 'font-group-label';
+      groupLabel.textContent = group;
+      fontOptionsEl.appendChild(groupLabel);
+
+      const grid = document.createElement('div');
+      grid.className = 'font-grid';
+      fonts.forEach(({ label, family }) => {
+        const btn = document.createElement('button');
+        btn.className = 'font-card' + (family === current ? ' font-card--active' : '');
+        btn.style.fontFamily = `'${family}', cursive`;
+        btn.innerHTML = `<span class="font-card-name">${escapeHtml(label)}</span><span class="font-card-sample">Hello!</span>`;
+        btn.addEventListener('click', () => applyFont(family));
+        grid.appendChild(btn);
+      });
+      fontOptionsEl.appendChild(grid);
+    });
+  }
 
   function escapeHtml(str) {
     return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -23,7 +90,8 @@
 
   async function showNamePicker() {
     const res = await fetch('/api/config');
-    const { family } = await res.json();
+    const { family, admins } = await res.json();
+    adminList = admins || [];
 
     nameOptions.innerHTML = '';
     family.forEach(name => {
@@ -42,6 +110,8 @@
     currentUser = name;
     nameModal.classList.add('hidden');
     userGreeting.textContent = `Hi, ${name}`;
+    if (adminList.includes(name)) adminBtn.classList.remove('hidden');
+    else adminBtn.classList.add('hidden');
     loadAndRender();
   }
 
@@ -200,7 +270,25 @@
   switchBtn.addEventListener('click', () => {
     localStorage.removeItem('author');
     currentUser = null;
+    adminBtn.classList.add('hidden');
     showNamePicker();
+  });
+
+  adminBtn.addEventListener('click', () => {
+    renderFontOptions();
+    adminModal.classList.remove('hidden');
+  });
+
+  adminCloseBtn.addEventListener('click', () => adminModal.classList.add('hidden'));
+
+  adminModal.addEventListener('click', (e) => {
+    if (e.target === adminModal) adminModal.classList.add('hidden');
+  });
+
+  clearBoardBtn.addEventListener('click', async () => {
+    if (!confirm('Clear ALL notes from the whiteboard? This cannot be undone.')) return;
+    await fetch(`/api/notes?admin=${encodeURIComponent(currentUser)}`, { method: 'DELETE' });
+    adminModal.classList.add('hidden');
   });
 
   function connectWS() {
@@ -214,10 +302,17 @@
   }
 
   // Init
+  const savedFont = localStorage.getItem('noteFont');
+  if (savedFont) document.documentElement.style.setProperty('--font-note', `'${savedFont}', cursive`);
+
   const saved = localStorage.getItem('author');
   if (saved) {
     currentUser = saved;
     userGreeting.textContent = `Hi, ${saved}`;
+    fetch('/api/config').then(r => r.json()).then(({ admins }) => {
+      adminList = admins || [];
+      if (adminList.includes(saved)) adminBtn.classList.remove('hidden');
+    });
     loadAndRender();
   } else {
     showNamePicker();

@@ -45,4 +45,7 @@ module.exports = {
     db.prepare('UPDATE notes SET pos_x = ?, pos_y = ? WHERE id = ?').run(x, y, id);
     return db.prepare('SELECT * FROM notes WHERE id = ?').get(id);
   },
+  clearAllNotes() {
+    return db.prepare('DELETE FROM notes').run();
+  },
 };

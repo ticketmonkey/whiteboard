@@ -1,3 +1,4 @@
 {
-  "family": ["Mom", "Dad", "Alice", "Bob"]
+  "family": ["Mom", "Dad", "Alice", "Bob"],
+  "admins": ["Mom", "Dad"]
 }
