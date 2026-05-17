@@ -284,6 +284,7 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ content, author: currentUser }),
       });
+      loadAndRender();
     });
 
     cancelBtn.addEventListener('click', loadAndRender);
@@ -306,6 +307,7 @@
       body: JSON.stringify({ content, author: currentUser }),
     });
     newNoteInput.value = '';
+    loadAndRender();
   });
 
   newNoteInput.addEventListener('keydown', e => {
@@ -340,6 +342,7 @@
   function connectWS() {
     const proto = location.protocol === 'https:' ? 'wss' : 'ws';
     const ws = new WebSocket(`${proto}://${location.host}`);
+    ws.onopen = () => loadAndRender();
     ws.onmessage = (evt) => {
       const msg = JSON.parse(evt.data);
       if (msg.type === 'notes_updated') loadAndRender();
