@@ -353,7 +353,15 @@
     ws.onopen = () => loadAndRender();
     ws.onmessage = (evt) => {
       const msg = JSON.parse(evt.data);
-      if (msg.type === 'notes_updated') loadAndRender();
+      if (msg.type === 'notes_updated') {
+        loadAndRender();
+      } else if (msg.type === 'note_moved') {
+        const card = notesList.querySelector(`.note-card[data-id="${msg.id}"]`);
+        if (card) {
+          card.style.left = msg.x + 'px';
+          card.style.top  = msg.y + 'px';
+        }
+      }
     };
     ws.onclose = () => setTimeout(connectWS, 2000);
   }

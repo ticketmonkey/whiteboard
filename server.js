@@ -57,7 +57,10 @@ app.patch('/api/notes/:id/position', (req, res) => {
   const existing = db.getNote(Number(req.params.id));
   if (!existing) return res.status(404).json({ error: 'Not found' });
   const note = db.updateNotePosition(Number(req.params.id), x, y);
-  broadcast();
+  const moveMsg = JSON.stringify({ type: 'note_moved', id: note.id, x: note.pos_x, y: note.pos_y });
+  for (const client of wss.clients) {
+    if (client.readyState === 1) client.send(moveMsg);
+  }
   res.json(note);
 });
 
