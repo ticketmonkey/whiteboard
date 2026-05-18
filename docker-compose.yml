@@ -1,0 +1,14 @@
+services:
+  whiteboard:
+    image: ghcr.io/ticketmonkey/whiteboard:latest
+    # To build from source instead: comment out image above, uncomment below
+    # build: .
+    ports:
+      - "3000:3000"
+    volumes:
+      - whiteboard_data:/app/data
+      - ./config.json:/app/config.json:ro
+    restart: unless-stopped
+
+volumes:
+  whiteboard_data:
